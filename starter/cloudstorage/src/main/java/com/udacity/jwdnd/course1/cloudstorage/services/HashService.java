@@ -13,14 +13,19 @@ import java.util.Base64;
 
 @Component
 public class HashService {
-    private Logger logger = LoggerFactory.getLogger(HashService.class);
+    private final Logger logger = LoggerFactory.getLogger(HashService.class);
+    private final Integer iterationCount = 5000;
+    private final Integer keyLength = 128;
 
-    public String getHashedValue(String data, String salt) {
+    public String getHashedValue(final String data, final String salt) {
         byte[] hashedValue = null;
 
-        KeySpec spec = new PBEKeySpec(data.toCharArray(), salt.getBytes(), 5000, 128);
+        KeySpec spec =
+                new PBEKeySpec(data.toCharArray(), salt.getBytes(),
+                        iterationCount, keyLength);
         try {
-            SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+            SecretKeyFactory factory =
+                    SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
             hashedValue = factory.generateSecret(spec).getEncoded();
         } catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
             logger.error(e.getMessage());
